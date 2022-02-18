@@ -2,7 +2,7 @@ import telebot
 import links
 from telebot import types
 
-bot = telebot.TeleBot("5281705986:AAFCCg69u5beK349HhS7KM2kNBuZZOFEWU4", parse_mode="None")
+bot = telebot.TeleBot("secret", parse_mode="None")
 
 user = bot.get_me()
 
@@ -28,7 +28,7 @@ def help_command(message):
 @bot.message_handler(commands=['search', 'algorithms', 'donation'])
 def commands(message):
     if message.text == '/search':
-        bot.reply_to(message, 'Please write down the tag to find algorithm:')
+        bot.reply_to(message, links.search_message_text)
         bot.register_next_step_handler(message, search_algorithm)
     elif message.text == '/algorithms':
         pass
@@ -39,7 +39,7 @@ def commands(message):
 @bot.message_handler(func=lambda m: True)
 def answer_message(message):
     if message.text == links.search_text:
-        bot.reply_to(message, 'Please write down the Algorithm name to find it!')
+        bot.reply_to(message, links.search_message_text)
         bot.register_next_step_handler(message, search_algorithm)
     elif message.text == links.algorithms_text:
         algorithm_list(message)
@@ -62,7 +62,7 @@ def algorithm_list(message):
 
 
 def search_algorithm(message):
-    bot.reply_to(message, message.text)
+
 
 
 def algorithms(message):

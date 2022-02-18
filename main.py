@@ -1,8 +1,10 @@
 import telebot
 import links
+import config
 from telebot import types
 
-bot = telebot.TeleBot("secret", parse_mode="None")
+
+bot = telebot.TeleBot(config.TOKEN, parse_mode="None")
 
 user = bot.get_me()
 
@@ -38,19 +40,42 @@ def commands(message):
 
 @bot.message_handler(func=lambda m: True)
 def answer_message(message):
-    if message.text == links.search_text:
+    if message.text == 'Go to the main menu':
+        message.text = links.welcome_text
+        return send_welcome(message)
+
+    if message.text == 'Graph':
+        get_algo(message, 0)
+    elif message.text == links.search_text:
         bot.reply_to(message, links.search_message_text)
         bot.register_next_step_handler(message, search_algorithm)
     elif message.text == links.algorithms_text:
         algorithm_list(message)
+
     elif message.text == links.donation_text:
         pass
     else:
         bot.reply_to(message, 'Sorry. I didnt understand what you wrote. You can use /help to check the commands')
 
 
-def algorithm_list(message):
+@bot.callback_query_handler(func=lambda call: True)
+def get_algo(call):
+    for i in range(len(links.algos)):
+        if call.data in links.algos[i]:
+            bot.send_message(call.from_user.id, call.data + "  -  " + links.algos[i].get(call.data))
+            return
 
+
+def get_algo(message, algo_id):
+    graph_list = list(links.algos[algo_id].keys())
+    markup = types.InlineKeyboardMarkup()
+    for i in range(len(graph_list)):
+        item = types.InlineKeyboardButton(text=graph_list[i], callback_data=graph_list[i])
+        markup.add(item)
+    bot.send_message(message.from_user.id, 'Choose algorithm link you want to see:', reply_markup=markup)
+
+
+def algorithm_list(message):
     marks = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for i in range(0, len(links.listOfAlgorithms), 2):
         item1 = types.KeyboardButton(links.listOfAlgorithms[i])
@@ -62,12 +87,7 @@ def algorithm_list(message):
 
 
 def search_algorithm(message):
-
-
-
-def algorithms(message):
-    marks = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    marks.row('Go main menu')
+    pass
 
 
 bot.infinity_polling()

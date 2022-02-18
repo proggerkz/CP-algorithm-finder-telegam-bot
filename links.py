@@ -1,13 +1,17 @@
 listOfAlgorithms = [
     'Data Structures',
     'Geometry',
-    'Graphs',
+    'Graph',
     'Math',
     'Sorting',
     'Strings'
 ]
 
-
+algos = [
+    {
+        'Djkstra O(Mlog(N))':'https://paste.ofcode.org/sjZLtGXC4JRPt4rtsMMDNw',
+    },
+]
 search_text = 'Search \U0001f50e'
 algorithms_text = 'Algorithms \U0001f4d5'
 donation_text = 'Donation \U0001f4b3'

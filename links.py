@@ -49,3 +49,9 @@ It is useful to find algorithm fast in the contest, or to improve yourself in tr
 Write /help to see the useful commands
 """
 
+donation_answer = """
+  \U0001f495  You can donate to save the project \U0001f495
+Link: https://yoomoney.ru/to/4100117611389694   
+Thank you
+"""
+

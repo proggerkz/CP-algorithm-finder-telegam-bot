@@ -41,13 +41,13 @@ def answer_message(message):
         return send_welcome(message)
     if message.text in links.idForAlgorithms.keys():
         get_algo(message, links.idForAlgorithms.get(message.text))
-    elif message.text == links.search_text:
-        bot.reply_to(message, links.search_message_text)
-        bot.register_next_step_handler(message, search_algorithm)
     elif message.text == links.algorithms_text:
         algorithm_list(message)
     elif message.text == links.donation_text:
-        pass
+        bot.reply_to(message, links.donation_answer)
+    elif message.text == links.search_text:
+        bot.reply_to(message, links.search_message_text)
+        bot.register_next_step_handler(message, search_algorithm)
     else:
         bot.reply_to(message, 'Sorry. I didnt understand what you wrote. You can use /help to check the commands')
 

@@ -18,8 +18,9 @@ def send_welcome(message):
     item1 = types.KeyboardButton(links.search_text)
     item2 = types.KeyboardButton(links.algorithms_text)
     item3 = types.KeyboardButton(links.donation_text)
+    item4 = types.KeyboardButton(links.credentials_title)
     marks.row(item1)
-    marks.row(item2, item3)
+    marks.row(item2, item4)
     bot.send_message(message.from_user.id, links.welcome_text, reply_markup=marks, parse_mode='MarkDown')
 
 
@@ -36,11 +37,13 @@ def commands(message):
 
 @bot.message_handler(func=lambda m: True)
 def answer_message(message):
-    if message.text == 'Go to the main menu':
+    if message.text == links.go_back_text:
         message.text = links.welcome_text
         return send_welcome(message)
     if message.text in links.idForAlgorithms.keys():
         get_algo(message, links.idForAlgorithms.get(message.text))
+    elif message.text == links.credentials_title:
+        bot.reply_to(message, links.credentials_text)
     elif message.text == links.algorithms_text:
         algorithm_list(message)
     elif message.text == links.donation_text:
@@ -49,7 +52,7 @@ def answer_message(message):
         bot.reply_to(message, links.search_message_text)
         bot.register_next_step_handler(message, search_algorithm)
     else:
-        bot.reply_to(message, 'Sorry. I didnt understand what you wrote. You can use /help to check the commands')
+        search_algorithm(message)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -75,32 +78,42 @@ def algorithm_list(message):
         item1 = types.KeyboardButton(links.listOfAlgorithms[i])
         item2 = types.KeyboardButton(links.listOfAlgorithms[i + 1])
         marks.row(item1, item2)
-    item = types.KeyboardButton('Go to the main menu')
+    item = types.KeyboardButton(links.go_back_text)
     marks.row(item)
     bot.send_message(message.from_user.id, 'Choose the algorithm chapter', reply_markup=marks)
 
 
 def lcs(x, y, m, n):
-    if m == 0 or n == 0:
-        return 0;
-    elif x[m - 1] == y[n - 1]:
-        return 1 + lcs(x, y, m - 1, n - 1);
-    else:
-        return max(lcs(x, y, m, n - 1), lcs(x, y,    m - 1, n));
+    m = len(x)
+    n = len(y)
+    lst = [[0] * (n + 1) for i in range(m + 1)]
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0 or j == 0:
+                lst[i][j] = 0
+            elif x[i - 1] == y[j - 1]:
+                lst[i][j] = lst[i - 1][j - 1] + 1
+            else:
+                lst[i][j] = max(lst[i - 1][j], lst[i][j - 1])
+    return lst[m][n]
 
 
 def search_algorithm(message):
+    if message.text in [links.search_text, links.credentials_title, links.algorithms_text]:
+        answer_message(message)
+        return
     sorted_list = []
     markup = types.InlineKeyboardMarkup()
     for i in range(len(DB.algos)):
         chapter = list(DB.algos[i].keys())
         for j in range(len(chapter)):
             edit_dist = lcs(message.text, chapter[j], len(message.text), len(chapter[j]))
-            # print(edit_dist)
             sorted_list.append([edit_dist, chapter[j]])
     sorted_list.sort(reverse=True)
     markup = types.InlineKeyboardMarkup()
-
+    if sorted_list[0][0] < 3:
+        bot.send_message(message.from_user.id, links.try_again_text)
+        return
     for i in range(min(len(sorted_list), 6)):
         item = types.InlineKeyboardButton(text=sorted_list[i][1], callback_data=sorted_list[i][1])
         markup.add(item)

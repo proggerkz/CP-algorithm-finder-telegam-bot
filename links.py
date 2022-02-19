@@ -1,12 +1,12 @@
 listOfAlgorithms = [
-    'Data Structures \U0001f4d2',
-    'Geometry \U0001f4d0',
     'Graph \U0001f4ca',
+    'Strings \U0001f4c4',
+    'Data Structures \U0001f4d2',
     'Math \U0000270f',
     'Sorting',
-    'Strings \U0001f4c4',
-    'Combinatorics \U0001f52d',
+    'Geometry \U0001f4d0',
     'Other \U0000269c',
+    'Combinatorics \U0001f52d',
 ]
 
 try_again_text = """
@@ -40,6 +40,8 @@ The algorithm sources are taken from:
 1. https://github.com/askdfjlas/cp-algorithms    
 2. https://github.com/Skeef79/CP-Algo/ 
 3. https://github.com/AllAlgorithms/ 
+4. https://github.com/sbmaruf/Algorithms-Code-Library/
+5. https://github.com/ADJA/algos/
 """
 
 help_text = """

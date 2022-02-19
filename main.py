@@ -4,7 +4,6 @@ import config
 import DB
 from telebot import types
 
-
 bot = telebot.TeleBot(config.TOKEN, parse_mode="None")
 
 user = bot.get_me()
@@ -41,7 +40,7 @@ def answer_message(message):
         message.text = links.welcome_text
         return send_welcome(message)
     if message.text in links.idForAlgorithms.keys():
-        get_algo(message, links.idForAlgorithms.get(message.text))
+        get_algo(message, links.idForAlgorithms.get(message.text), 0)
     elif message.text == links.credentials_title:
         bot.reply_to(message, links.credentials_text)
     elif message.text == links.algorithms_text:
@@ -57,18 +56,35 @@ def answer_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def get_algo(message):
-    for i in range(len(DB.algos)):
-        if message.data in DB.algos[i]:
-            bot.send_message(message.from_user.id, message.data + "  -  " + DB.algos[i].get(message.data))
-            return
+    if '0' <= message.data[0] <= '9':
+        id, algo_id, msg_type = message.data.split()
+        if msg_type == 'Next':
+            get_algo(message, int(algo_id), int(id) + 5)
+        else:
+            get_algo(message, int(algo_id), int(id) - 5)
+    else:
+        for i in range(len(DB.algos)):
+            if message.data in DB.algos[i]:
+                bot.send_message(message.from_user.id, message.data + "  -  " + DB.algos[i].get(message.data))
+                return
 
 
-def get_algo(message, algo_id):
+def get_algo(message, algo_id, id):
     graph_list = list(DB.algos[algo_id].keys())
     markup = types.InlineKeyboardMarkup()
-    for i in range(len(graph_list)):
+    for i in range(id, min(len(graph_list), id + 5)):
         item = types.InlineKeyboardButton(text=graph_list[i], callback_data=graph_list[i])
         markup.add(item)
+    if id != 0 and id + 5 < len(graph_list):
+        item = types.InlineKeyboardButton(text='Prev', callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
+        item2 = types.InlineKeyboardButton(text='Next', callback_data=str(id) + ' ' + str(algo_id) + ' Next')
+        markup.add(item, item2)
+    elif id != 0:
+        item = types.InlineKeyboardButton(text='Prev', callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
+        markup.add(item)
+    elif id + 5 < len(graph_list):
+        item2 = types.InlineKeyboardButton(text='Next', callback_data=str(id) + ' ' + str(algo_id) + ' Next')
+        markup.add(item2)
     bot.send_message(message.from_user.id, 'Choose algorithm link you want to see:', reply_markup=markup)
 
 
@@ -103,7 +119,6 @@ def search_algorithm(message):
         answer_message(message)
         return
     sorted_list = []
-    markup = types.InlineKeyboardMarkup()
     for i in range(len(DB.algos)):
         chapter = list(DB.algos[i].keys())
         for j in range(len(chapter)):

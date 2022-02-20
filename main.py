@@ -8,8 +8,9 @@ bot = telebot.TeleBot(config.TOKEN, parse_mode="None")
 
 user = bot.get_me()
 
+user.can_join_groups = False
+# print(user)
 updates = bot.get_updates()
-
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -73,17 +74,18 @@ def get_algo(message, algo_id, id):
     graph_list = list(DB.algos[algo_id].keys())
     markup = types.InlineKeyboardMarkup()
     for i in range(id, min(len(graph_list), id + 5)):
-        item = types.InlineKeyboardButton(text=graph_list[i], callback_data=graph_list[i])
+        item = types.InlineKeyboardButton(text="\U000025ab  " + graph_list[i], callback_data=graph_list[i])
         markup.add(item)
+
     if id != 0 and id + 5 < len(graph_list):
-        item = types.InlineKeyboardButton(text='Prev', callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
-        item2 = types.InlineKeyboardButton(text='Next', callback_data=str(id) + ' ' + str(algo_id) + ' Next')
+        item = types.InlineKeyboardButton(text=links.prev_text, callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
+        item2 = types.InlineKeyboardButton(text=links.next_text, callback_data=str(id) + ' ' + str(algo_id) + ' Next')
         markup.add(item, item2)
     elif id != 0:
-        item = types.InlineKeyboardButton(text='Prev', callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
+        item = types.InlineKeyboardButton(text=links.prev_text, callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
         markup.add(item)
     elif id + 5 < len(graph_list):
-        item2 = types.InlineKeyboardButton(text='Next', callback_data=str(id) + ' ' + str(algo_id) + ' Next')
+        item2 = types.InlineKeyboardButton(text=links.next_text, callback_data=str(id) + ' ' + str(algo_id) + ' Next')
         markup.add(item2)
     bot.send_message(message.from_user.id, 'Choose algorithm link you want to see:', reply_markup=markup)
 

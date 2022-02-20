@@ -3,7 +3,7 @@ listOfAlgorithms = [
     'Strings \U0001f4c4',
     'Data Structures \U0001f4d2',
     'Math \U0000270f',
-    'Sorting',
+    'Sorting \U0001f5d2 ',
     'Geometry \U0001f4d0',
     'Other \U0000269c',
     'Combinatorics \U0001f52d',
@@ -33,7 +33,7 @@ rqToText = {
 search_message_text = 'Please write down the tag to find algorithm:'
 
 credentials_text = """
-    The project has been created by Khibadullin Orazbek
+    The project has been created and fully written by Khibadullin Orazbek
     
 The algorithm sources are taken from:
 
@@ -42,10 +42,12 @@ The algorithm sources are taken from:
 3. https://github.com/AllAlgorithms/ 
 4. https://github.com/sbmaruf/Algorithms-Code-Library/
 5. https://github.com/ADJA/algos/
+6. https://github.com/ncduy0303/Competitive-Programming
 """
-
+prev_text = 'Prev'
+next_text = 'Next'
 help_text = """
-    I can help you to find algorithms by links
+    I can help you to find algorithms with links
     
 You can control me sending these commands:
     

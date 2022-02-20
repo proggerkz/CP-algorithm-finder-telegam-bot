@@ -3,12 +3,15 @@ algos = [
     {
         'Dijkstra on sparse graphs': 'https://pastecode.io/s/rgwdm5mg',
         'Floyd Warshall algorithm': 'https://pastecode.io/s/k7jsvby8',
+        'Ford Bellman algorithm': 'https://pastecode.io/s/cucn6zg6',
         "Kuhn's algorithm": 'https://pastecode.io/s/np8muase',
         'Hungarian algorithm': 'https://pastecode.io/s/fur5a7nb',
         'Finding bridges': 'https://pastecode.io/s/z8g1acnz',
         'Finding cut points': 'https://pastecode.io/s/knrwicmg',
         '2-SAT': 'https://pastecode.io/s/4mdfgrb5',
         'Centroid decomposition': 'https://pastecode.io/s/5uh3smby',
+        "Dinic's algorithm": 'https://pastecode.io/s/j1kp6em1',
+        "Edmonds Karp algorithm": 'https://pastecode.io/s/f6i8fbgh',
 
     },
     # Strings
@@ -34,7 +37,7 @@ algos = [
         'Binary mod exponentiation': 'https://pastecode.io/s/jus81mve',
         'Extended Euclidean algorithm': 'https://pastecode.io/s/per4tgo9',
         'Inverse mod algorithm': 'https://pastecode.io/s/1bazo4a2',
-        'Eratosfen  Sieve': 'https://pastecode.io/s/ksta6n3t',
+        'Eratosfen Sieve': 'https://pastecode.io/s/ksta6n3t',
         'Linear Sieve': 'https://pastecode.io/s/9pqvbc37',
         'Linear Recurrence': 'https://pastecode.io/s/7ok8dqid',
         'Fast Fourier Transform(FFT)': 'https://pastecode.io/s/77dg6ocg',
@@ -54,6 +57,7 @@ algos = [
     },
     # Geometry
     {
+        'Geometry basic': 'https://pastecode.io/s/8n5xfuxq',
         'Line segment intersection': 'https://pastecode.io/s/u8ktfiux',
         'Convex Hull': 'https://pastecode.io/s/19p1u8t3',
         'Rotate Point': 'https://pastecode.io/s/z6opakcu',
@@ -63,6 +67,7 @@ algos = [
     {
         'Disjoint Set Union': 'https://pastecode.io/s/xf664oaj',
         'Matrix exponential': 'https://pastecode.io/s/om9rdt4b',
+        'Knapsack algorithm': 'https://pastecode.io/s/93wvq3av',
     },
     # Combinatorics
     {

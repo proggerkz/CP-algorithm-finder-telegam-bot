@@ -76,7 +76,7 @@ def get_algo(message, algo_id, id):
     for i in range(id, min(len(graph_list), id + 5)):
         item = types.InlineKeyboardButton(text="\U000025ab  " + graph_list[i], callback_data=graph_list[i])
         markup.add(item)
-
+    
     if id != 0 and id + 5 < len(graph_list):
         item = types.InlineKeyboardButton(text=links.prev_text, callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
         item2 = types.InlineKeyboardButton(text=links.next_text, callback_data=str(id) + ' ' + str(algo_id) + ' Next')

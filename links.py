@@ -3,7 +3,7 @@ listOfAlgorithms = [
     'Strings \U0001f4c4',
     'Data Structures \U0001f4d2',
     'Math \U0000270f',
-    'Sorting \U0001f5d2 ',
+    'Sorting \U0001f5d2',
     'Geometry \U0001f4d0',
     'Other \U0000269c',
     'Combinatorics \U0001f52d',

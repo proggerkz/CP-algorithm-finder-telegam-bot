@@ -2,18 +2,26 @@ import telebot
 import links
 import config
 import DB
+import linkParser
 from telebot import types
 
+
+userList = {"1"}
 bot = telebot.TeleBot(config.TOKEN, parse_mode="None")
-
 user = bot.get_me()
-
 user.can_join_groups = False
-# print(user)
 updates = bot.get_updates()
+
+
+@bot.message_handler(commands=['orka12o'])
+def checkUserList(message):
+    bot.send_message(message.from_user.id, 'Current users ' + str(len(userList)))
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
+    # bot.send_message(message.from_user.id, linkParser.parse_link('https://pastecode.io/s/1bazo4a2'))
+    userList.add(str(message.from_user.id))
     marks = types.ReplyKeyboardMarkup(resize_keyboard=True )
     item1 = types.KeyboardButton(links.search_text)
     item2 = types.KeyboardButton(links.algorithms_text)
@@ -39,7 +47,8 @@ def commands(message):
 def answer_message(message):
     if message.text == links.go_back_text:
         message.text = links.welcome_text
-        return send_welcome(message)
+        send_welcome(message)
+        return
     if message.text in links.idForAlgorithms.keys():
         get_algo(message, links.idForAlgorithms.get(message.text), 0)
     elif message.text == links.credentials_title:
@@ -57,26 +66,44 @@ def answer_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def get_algo(message):
-    if '0' <= message.data[0] <= '9':
+    if message.data.find('Link') != -1:
+        text = str(message.data[5:])
+        for i in range(len(DB.algos)):
+            if text in DB.algos[i]:
+                bot.send_message(message.from_user.id, text + "  -  " + DB.algos[i].get(text))
+                break
+    elif message.data.find('Text') != -1:
+        text = message.data[5:]
+        save_link = ''
+        for i in range(len(DB.algos)):
+            if text in DB.algos[i]:
+                save_link = DB.algos[i].get(text)
+        parsed_text = linkParser.parse_link(save_link)
+        parsed_text = "```" + "\n" + parsed_text
+        parsed_text = parsed_text + "\n" + "```"
+        bot.send_message(message.from_user.id, parsed_text, parse_mode='Markdown')
+    elif '0' <= message.data[0] <= '9' and message.data[-4:] in ['Next', 'Prev']:
         id, algo_id, msg_type = message.data.split()
         if msg_type == 'Next':
             get_algo(message, int(algo_id), int(id) + 5)
         else:
             get_algo(message, int(algo_id), int(id) - 5)
     else:
-        for i in range(len(DB.algos)):
-            if message.data in DB.algos[i]:
-                bot.send_message(message.from_user.id, message.data + "  -  " + DB.algos[i].get(message.data))
-                return
+        markup = types.InlineKeyboardMarkup()
+        item1 = types.InlineKeyboardButton(text='Text', callback_data='Text ' + message.data)
+        item2 = types.InlineKeyboardButton(text='Link', callback_data='Link ' + message.data)
+        markup.add(item1, item2)
+        bot.send_message(message.from_user.id, 'Choose the type of code display:', reply_markup=markup)
 
 
 def get_algo(message, algo_id, id):
     graph_list = list(DB.algos[algo_id].keys())
     markup = types.InlineKeyboardMarkup()
+
     for i in range(id, min(len(graph_list), id + 5)):
-        item = types.InlineKeyboardButton(text="\U000025ab  " + graph_list[i], callback_data=graph_list[i])
+        item = types.InlineKeyboardButton(text="\U0001f518  " + graph_list[i], callback_data=graph_list[i])
         markup.add(item)
-    
+
     if id != 0 and id + 5 < len(graph_list):
         item = types.InlineKeyboardButton(text=links.prev_text, callback_data=str(id) + ' ' + str(algo_id) + ' Prev')
         item2 = types.InlineKeyboardButton(text=links.next_text, callback_data=str(id) + ' ' + str(algo_id) + ' Next')
@@ -92,16 +119,24 @@ def get_algo(message, algo_id, id):
 
 def algorithm_list(message):
     marks = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for i in range(0, len(links.listOfAlgorithms), 2):
-        item1 = types.KeyboardButton(links.listOfAlgorithms[i])
-        item2 = types.KeyboardButton(links.listOfAlgorithms[i + 1])
-        marks.row(item1, item2)
-    item = types.KeyboardButton(links.go_back_text)
-    marks.row(item)
+    i = 0
+    while i < len(links.listOfAlgorithms):
+        if i + 1 == len(links.listOfAlgorithms):
+            item1 = types.KeyboardButton(links.listOfAlgorithms[i])
+            item2 = types.KeyboardButton(links.go_back_text)
+            marks.row(item1, item2)
+        else:
+            item1 = types.KeyboardButton(links.listOfAlgorithms[i])
+            item2 = types.KeyboardButton(links.listOfAlgorithms[i + 1])
+            marks.row(item1, item2)
+            if i + 2 == len(links.listOfAlgorithms):
+                item3 = types.KeyboardButton(links.go_back_text)
+                marks.row(item3)
+        i += 2
     bot.send_message(message.from_user.id, 'Choose the algorithm chapter', reply_markup=marks)
 
 
-def lcs(x, y, m, n):
+def lcs(x, y):
     m = len(x)
     n = len(y)
     lst = [[0] * (n + 1) for i in range(m + 1)]
@@ -124,7 +159,7 @@ def search_algorithm(message):
     for i in range(len(DB.algos)):
         chapter = list(DB.algos[i].keys())
         for j in range(len(chapter)):
-            edit_dist = lcs(message.text, chapter[j], len(message.text), len(chapter[j]))
+            edit_dist = lcs(message.text, chapter[j])
             sorted_list.append([edit_dist, chapter[j]])
     sorted_list.sort(reverse=True)
     markup = types.InlineKeyboardMarkup()
